@@ -1,0 +1,35 @@
+﻿Manual de usuario
+
+*Requisitos:
+	*Ordenador conectado a pantalla externa
+	*Navegador Firefox o Chrome actualizado
+	*Software Stemporizador proporcionado por Stela
+*Uso:
+	0.-Abre los archivos en tu navegador Firefox o Chrome.
+
+	1.- En Panel de Control --> Pantalla -->Configuracion de pantalla. Configurar en las pantalla 1 y 2, dividida.
+	    La pantalla 1 --> Panel de control
+	    La pantalla 2 --> Temporizador
+
+	2.- Para ponerlo en modo pantalla completa se debe pulsar la tecla F11. 
+
+	3.- Para iniciar en "i". Mensaje: "Comienza el juego".
+
+	4.- Reiniciar --> F5 o recarga la página. 
+
+	5.- Escribe el texto y pulsa intro o clik en ENVIAR MENSAJE.
+
+	6.- Escribe el texto y pulsa intro o clik en ENVIAR MENSAJE y se sustuirá por el mensaje anterior las veces que quieras.
+
+	7.- Limpia el mensaje que aparece actualmente en LIMPIAR MENSAJE.
+
+	8.- Al terminar la cuenta atrás aparece el mensaje: "FIN DEL JUEGO".
+
+*Recomendaciones:
+	* Mira el video que se adjunta.
+	* Actualiza tus navegadores.
+	* Si alguno de los comandos anteriores no funciona no te agobies, haz click en la ventana correcta (solo hay dos!) e inténtalo de nuevo.
+	* Soporte ténico: info@stelast.com
+
+Copyright ©2019 Todos los derechos reservados  Desarrollado por Stela Soluciones Tecnológicas S.Coop.Especial.
+www.stelast.com

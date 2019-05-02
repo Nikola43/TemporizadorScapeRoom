@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Temporizador</title>
+
+    <!-- Font Awesome -->
+    <link href="fontawesome/css/all.css" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="css/mdb.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <style>
+
+        html,
+        body,
+        header,
+        .view {
+            height: 100vh;
+        }
+
+        @media (max-width: 740px) {
+            html,
+            body,
+            header,
+            .view {
+                height: 815px;
+            }
+        }
+
+        @media (min-width: 800px) and (max-width: 850px) {
+            html,
+            body,
+            header,
+            .view {
+                height: 650px;
+            }
+        }
+
+        .intro-2 {
+            background: url("img/background.jpg") no-repeat center center;
+            background-size: cover;
+        }
+
+        h6 {
+            line-height: 1.7;
+        }
+    </style>
+
+</head>
+
+<body>
+<!--Main Navigation-->
+<header>
+    <!--Intro Section-->
+    <section class="view intro-2">
+        <div class="mask rgba-stylish-strong h-100 d-flex justify-content-center align-items-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto mt-lg-12">
+                        <div class="text-center">
+                            <h2 id="timer"></h2>
+                            <h3 id="text"></h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</header>
+<!--Main Navigation-->
+<!--  SCRIPTS  -->
+<!-- JQuery -->
+<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="js/popper.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="js/mdb.min.js"></script>
+
+<script>
+    var counter = 0;
+    var intervalId = null;
+
+    writeWebStorage("", "counter_text");
+    writeWebStorage("", "counter_number");
+    document.getElementById("timer").innerHTML = "Bienvenidos";
+
+    function finish() {
+        clearInterval(intervalId);
+        writeWebStorage("", "counter_text");
+        document.getElementById("timer").innerHTML = "FIN DEL JUEGO";
+    }
+
+    function timer() {
+        var minutes = Math.floor( (counter % 3600) / 60 );
+        var seconds = counter % 60;
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        seconds = seconds < 10 ? '0' + seconds : seconds;
+
+        if (counter === 0) {
+            finish();
+        } else {
+            writeWebStorage(minutes + ":" + seconds, "counter_number");
+            document.getElementById("timer").innerHTML = readWebStorage("counter_number");
+        }
+        document.getElementById("text").innerHTML = readWebStorage("counter_text");
+        counter--;
+    }
+
+    function start() {
+        document.getElementById("timer").innerHTML = "COMIENZA EL JUEGO";
+        counter = 3600;
+        intervalId = setInterval(timer, 1000);
+    }
+
+    function readWebStorage(storageItem) {
+        return (typeof (Storage) !== "undefined") ? localStorage.getItem(storageItem) : null;
+    }
+
+    function writeWebStorage(element, storageItem) {
+        if (typeof (Storage) !== "undefined") localStorage.setItem(storageItem, element);
+    }
+
+    document.addEventListener('keyup', function (event) {
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        var key = event.key || event.keyCode;
+
+        if (key === 'I' || key === 'i' || key === 105 || key === 73) {
+            start();
+        }
+    });
+</script>
+</body>
+</html>

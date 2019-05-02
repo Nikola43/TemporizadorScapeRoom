@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>Panel de control</title>
+
+    <!-- Font Awesome -->
+    <link href="fontawesome/css/all.css" rel="stylesheet">
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Material Design Bootstrap -->
+    <link href="css/mdb.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+    <style>
+
+        html,
+        body,
+        header,
+        .view {
+            height: 100vh;
+        }
+
+        @media (max-width: 740px) {
+            html,
+            body,
+            header,
+            .view {
+                height: 815px;
+            }
+        }
+
+        @media (min-width: 800px) and (max-width: 850px) {
+            html,
+            body,
+            header,
+            .view {
+                height: 650px;
+            }
+        }
+
+        .intro-2 {
+            background: url("img/background.jpg") no-repeat center center;
+            background-size: cover;
+        }
+
+        h6 {
+            line-height: 1.7;
+        }
+
+
+    </style>
+</head>
+
+<body>
+<!--Main Navigation-->
+<header>
+    <!--Intro Section-->
+    <section class="view intro-2">
+        <div class="mask rgba-stylish-strong h-100 d-flex justify-content-center align-items-center">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 mx-auto mt-lg-8 select-outline">
+                        <div class="text-center mb-5 center">
+                            <div class="md-form">
+                                <h3 id="timer"></h3>
+                                <h4 id="text" class="mb-5"></h4>
+                                <div class="md-form">
+                                    <input id="input_text" type="text" class="form-control"
+                                           style="color: #ffffff; font-size: 20px;">
+                                    <label for="input_text" style="color: #ffffff; font-size: 20px">Introduzca el
+                                        mensaje</label>
+                                </div>
+                                <select id="select_hints" class="mdb-select md-form">
+                                    <option value="-1" disabled selected>Choose your option</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 mx-auto mt-lg-8 select-outline">
+                        <div class="text-center center">
+                            <button class="btn rounded blue-gradient btn-lg" onclick="sendMessage()">Enviar mensaje
+                            </button>
+                            <button class="btn rounded blue-gradient btn-lg" onclick="clearMessage()">Borrar mensaje
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 mx-auto mt-lg-8 select-outline">
+                        <div class="text-center center">
+                            <button class="btn rounded blue-gradient btn-lg" onclick="insertHint()">Guardar pista
+                            </button>
+                            <button class="btn rounded blue-gradient btn-lg" onclick="clearHints()">Borrar pista
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-7 col-lg-7 col-md-12 col-sm-12 mx-auto mt-lg-5">
+                        <div class="text-center mb-5">
+                            <p class="text-white">Copyright &copy;<script>document.write(new Date().getFullYear());</script>
+                                Todos los derechos reservados | Desarrollado con <i class="fas fa-heart text-info"
+                                                                                    aria-hidden="true"></i> por <a
+                                        class="text-info" href="http://www.stelast.com/" target="_blank">Stela </a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</header>
+<!--Main Navigation-->
+<!--  SCRIPTS  -->
+<!-- JQuery -->
+<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+<!-- Bootstrap tooltips -->
+<script type="text/javascript" src="js/popper.min.js"></script>
+<!-- Bootstrap core JavaScript -->
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<!-- MDB core JavaScript -->
+<script type="text/javascript" src="js/mdb.min.js"></script>
+
+<script>
+    var timerCounter = 0;
+    var timerCounterIntervalId = null;
+
+    // Material Select Initialization
+    $(document).ready(function () {
+        let hints = [];
+
+        if (readWebStorage("hints").length) {
+            hints = hints.concat(JSON.parse(readWebStorage("hints")));
+        }
+
+        for (let i = 1; i <= hints.length; i++) {
+            $(".mdb-select").append(new Option(hints[i], (i + 1).toString()));
+        }
+
+        $('.mdb-select').materialSelect();
+
+        $('.mdb-select').on('change', function() {
+            document.getElementById("input_text").focus();
+            document.getElementById("input_text").value = $("#select_hints option:selected").text();
+        })
+    });
+
+
+    document.getElementById("timer").innerText = readWebStorage("counter_number");
+    startTimer();
+
+    function updateTimer() {
+        if (timerCounter === 0) {
+            clearInterval(timerCounterIntervalId);
+        } else {
+            document.getElementById("timer").innerText = readWebStorage("counter_number");
+        }
+        document.getElementById("text").innerHTML = readWebStorage("counter_text");
+        timerCounter--;
+    }
+
+    function startTimer() {
+        timerCounter = 7200;
+        timerCounterIntervalId = setInterval(updateTimer, 100);
+    }
+
+    function sendHint() {
+        alert($("#select_hints option:selected").text())
+    }
+
+    function insertHint() {
+        let hints = [];
+        let hint;
+        if (document.getElementById("input_text").value.length) {
+            hint = document.getElementById("input_text").value;
+            if (readWebStorage("hints").length) {
+                hints = hints.concat(JSON.parse(readWebStorage("hints")));
+            }
+            hints.push(hint);
+            writeWebStorage(JSON.stringify(hints), "hints");
+
+            document.getElementById("input_text").value = "";
+
+
+            //document.getElementById("select_hints").options.length = 0;
+
+/*
+            // Material Select Destroy
+            $('.mdb-select').materialSelect({
+                destroy: true
+            });
+
+
+
+            // Material Select Destroy
+            $('.mdb-select').materialSelect();
+*/
+            toastr.info('Pista añadida');
+
+        } else {
+            toastr.error('Error: No se puede añadir una pista vacía.');
+        }
+    }
+
+    function clearHints() {
+        let hints = [];
+        if ($("#select_hints").val() !== null) {
+            if (readWebStorage("hints").length) {
+                hints = hints.concat(JSON.parse(readWebStorage("hints")));
+            }
+            hints.splice($("#select_hints").val() - 1, 1);
+            writeWebStorage(JSON.stringify(hints), "hints");
+            toastr.info('Pista borrada.');
+        } else {
+            toastr.error('Error: Debe seleccionar una pista.');
+            $('mdb-select').first().focus();
+        }
+    }
+
+
+    function sendMessage() {
+        if (document.getElementById("input_text").value.length > 0) {
+            writeWebStorage(document.getElementById("input_text").value, "counter_text");
+            document.getElementById("text").innerText = readWebStorage("counter_text");
+            document.getElementById("input_text").value = "";
+            toastr.info('Mensaje enviado.');
+        } else {
+            toastr.error('Error: No se puede mandar un mensaje vacío.');
+            document.getElementById("input_text").focus();
+        }
+    }
+
+    function clearMessage() {
+        document.getElementById("input_text").value = "";
+        document.getElementById("text").innerText = "";
+        writeWebStorage("", "counter_text");
+        toastr.info('Mensaje borrado.');
+    }
+
+    function readWebStorage(storageItem) {
+        return (typeof (Storage) !== "undefined") ? localStorage.getItem(storageItem) : null;
+    }
+
+    function writeWebStorage(element, storageItem) {
+        if (typeof (Storage) !== "undefined") localStorage.setItem(storageItem, element);
+    }
+
+    document.addEventListener('keyup', function (event) {
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        var key = event.key || event.keyCode;
+
+        if (key === 'Enter') {
+            sendMessage();
+        }
+    });
+</script>
+
+</body>
+</html>
