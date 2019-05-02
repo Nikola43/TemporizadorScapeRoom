@@ -136,7 +136,9 @@
 
     function start() {
         document.getElementById("timer").innerHTML = "COMIENZA EL JUEGO";
-        counter = 3600;
+        counter = readWebStorage("time");
+        //counter = 3600;
+
         intervalId = setInterval(timer, 1000);
     }
 

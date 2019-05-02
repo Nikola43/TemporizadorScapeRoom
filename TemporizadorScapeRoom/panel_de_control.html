@@ -64,39 +64,48 @@
     <section class="view intro-2">
         <div class="mask rgba-stylish-strong h-100 d-flex justify-content-center align-items-center">
             <div class="container">
-                <div class="row">
+                <div class="row text-center">
                     <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 mx-auto mt-lg-8 select-outline">
                         <div class="text-center mb-5 center">
                             <div class="md-form">
                                 <h3 id="timer"></h3>
                                 <h4 id="text" class="mb-5"></h4>
                                 <div class="md-form">
-                                    <input id="input_text" type="text" class="form-control"
-                                           style="color: #ffffff; font-size: 20px;">
+                                    <input id="input_text" type="text" class="form-control" style="color: #ffffff; font-size: 20px;">
                                     <label for="input_text" style="color: #ffffff; font-size: 20px">Introduzca el
                                         mensaje</label>
                                 </div>
-                                <select id="select_hints" class="browser-default custom-select">
+                                <select id="select_hints" class="browser-default custom-select mt-5" onchange="setHint()">
                                     <option value="-1" disabled selected>Seleccione una pista</option>
                                 </select>
                             </div>
                         </div>
+                        <div class="form-row md-form">
+                            <div class="col-md-4 mb-3 ">
+                                <input type="text" id="hours" class="form-control" style="color: #ffffff; font-size: 20px">
+                                <label for="hours" style="color: #ffffff; font-size: 20px">Horas</label>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <input type="text" id="minutes" class="form-control" style="color: #ffffff; font-size: 20px">
+                                <label for="minutes" style="color: #ffffff; font-size: 20px">Minutos</label>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <input type="text" id="seconds" class="form-control" style="color: #ffffff; font-size: 20px">
+                                <label for="seconds" style="color: #ffffff; font-size: 20px">Segundos</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 mx-auto mt-lg-8 select-outline">
-                        <div class="text-center center">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 mx-auto mt-lg-12">
                             <button class="btn rounded blue-gradient btn-lg" onclick="sendMessage()">Enviar mensaje
                             </button>
                             <button class="btn rounded blue-gradient btn-lg" onclick="clearMessage()">Borrar mensaje
                             </button>
-                        </div>
-                    </div>
-                    <div class="col-xl-8 col-lg-8 col-md-12 col-sm-12 mx-auto mt-lg-8 select-outline">
-                        <div class="text-center center">
+                            <button class="btn rounded blue-gradient btn-lg" onclick="setTime()">Establecer tiempo
+                            </button>
                             <button class="btn rounded blue-gradient btn-lg" onclick="insertHint()">Guardar pista
                             </button>
                             <button class="btn rounded blue-gradient btn-lg" onclick="clearHints()">Borrar pista
                             </button>
-                        </div>
                     </div>
                 </div>
 
@@ -140,11 +149,67 @@
         for (let i = 1; i <= hints.length; i++) {
             $("#select_hints").append(new Option(hints[i], (i + 1).toString()));
         }
+
+        document.getElementById("hours").onkeypress = soloNumerosRealesEnteros;
+        document.getElementById("minutes").onkeypress = soloNumerosRealesEnteros;
+        document.getElementById("seconds").onkeypress = soloNumerosRealesEnteros;
+    });
+
+
+    document.addEventListener('keyup', function (event) {
+        if (event.defaultPrevented) {
+            return;
+        }
+
+        var key = event.key || event.keyCode;
+
+        if (key === 'Enter') {
+            sendMessage();
+        }
     });
 
 
     document.getElementById("timer").innerText = readWebStorage("counter_number");
     startTimer();
+
+
+    function setTime() {
+        let time = 0;
+        let hour = document.getElementById("hours").value;
+        let minutes = document.getElementById("minutes").value;
+        let seconds = document.getElementById("seconds").value;
+
+        if (hour > 0)
+            time += (hour * 60 * 60);
+
+        if (minutes > 0)
+            time += (minutes * 60);
+
+        if (seconds > 0)
+            time += (seconds * 1);
+
+        writeWebStorage(time, "time");
+
+        toastr.info('Tiempo de juego establecido');
+    }
+
+    function soloNumerosRealesEnteros(event){
+        let codigoASCII = event.charCode || window.event.keyCode;
+
+
+        if (this.value[0] > "5"){
+            return false;
+        }
+
+        if (this.value.length > 1){
+            return false;
+        }
+
+        if (codigoASCII === 44){
+        } else {
+            return ((codigoASCII >= 48) && (codigoASCII <= 57));
+        }
+    }
 
     function updateTimer() {
         if (timerCounter === 0) {
@@ -176,6 +241,11 @@
         }
     }
 
+    function setHint() {
+        document.getElementById("input_text").focus();
+        document.getElementById("input_text").value = $( "#select_hints option:selected" ).text();
+    }
+
     function insertHint() {
         let hints = [];
         let hint;
@@ -205,13 +275,13 @@
             writeWebStorage(JSON.stringify(hints), "hints");
 
             reloadSelect();
+            document.getElementById("input_text").value = "";
             toastr.info('Pista borrada.');
         } else {
             toastr.error('Error: Debe seleccionar una pista.');
             $('#select_hints').first().focus();
         }
     }
-
 
     function sendMessage() {
         if (document.getElementById("input_text").value.length > 0) {
@@ -239,18 +309,6 @@
     function writeWebStorage(element, storageItem) {
         if (typeof (Storage) !== "undefined") localStorage.setItem(storageItem, element);
     }
-
-    document.addEventListener('keyup', function (event) {
-        if (event.defaultPrevented) {
-            return;
-        }
-
-        var key = event.key || event.keyCode;
-
-        if (key === 'Enter') {
-            sendMessage();
-        }
-    });
 </script>
 
 </body>
