@@ -86,60 +86,77 @@
 <script type="text/javascript" src="js/mdb.min.js"></script>
 
 <script>
-    var counter = 0;
-    var intervalId = null;
+    let counter = 0;
+    let intervalId = null;
+    let hours = 0;
+    let minutes = 0;
+    let seconds = 0;
 
-    // Material Select Initialization
     $(document).ready(function () {
+        clearTextAndCounter();
+        showWelcomeMessage();
+        gameStartListener();
+    });
+
+    function showWelcomeMessage() {
+        document.getElementById("timer").innerHTML = "Bienvenidos";
+    }
+
+    function clearTextAndCounter() {
         writeWebStorage("", "counter_text");
         writeWebStorage("", "counter_number");
-        document.getElementById("timer").innerHTML = "Bienvenidos";
+    }
 
+    function gameStartListener() {
         document.addEventListener('keyup', function (event) {
             if (event.defaultPrevented) {
                 return;
             }
 
-            var key = event.key || event.keyCode;
+            let key = event.key || event.keyCode;
 
             if (key === 'I' || key === 'i' || key === 105 || key === 73) {
-                start();
+                startGame();
             }
         });
-    });
+    }
 
 
 
-    function finish() {
+    function gameOver() {
         clearInterval(intervalId);
         writeWebStorage("", "counter_text");
         document.getElementById("timer").innerHTML = "FIN DEL JUEGO";
     }
 
-    function timer() {
-        var hours = Math.floor( (counter / 3600) );
-        var minutes = Math.floor( (counter % 3600) / 60 );
-        var seconds = counter % 60;
+    function gameTimer() {
+        refreshScreen();
+    }
+
+    function refreshScreen() {
+        counter = readWebStorage("time");
+        hours = Math.floor( (counter / 3600) );
+        minutes = Math.floor( (counter % 3600) / 60 );
+        seconds = counter % 60;
         hours   = hours   < 10 ? '0' + hours   : hours;
         minutes = minutes < 10 ? '0' + minutes : minutes;
         seconds = seconds < 10 ? '0' + seconds : seconds;
 
         if (counter === 0) {
-            finish();
+            gameOver();
         } else {
             writeWebStorage(hours + ":" + minutes + ":" + seconds, "counter_number");
             document.getElementById("timer").innerHTML = readWebStorage("counter_number");
         }
         document.getElementById("text").innerHTML = readWebStorage("counter_text");
         counter--;
+        writeWebStorage(counter, "time");
     }
 
-    function start() {
+    function startGame() {
         document.getElementById("timer").innerHTML = "COMIENZA EL JUEGO";
         counter = readWebStorage("time");
-        //counter = 3600;
-
-        intervalId = setInterval(timer, 1000);
+        intervalId = setInterval(gameTimer, 1000);
     }
 
     function readWebStorage(storageItem) {
