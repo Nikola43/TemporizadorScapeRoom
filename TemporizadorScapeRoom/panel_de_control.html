@@ -76,8 +76,8 @@
                                     <label for="input_text" style="color: #ffffff; font-size: 20px">Introduzca el
                                         mensaje</label>
                                 </div>
-                                <select id="select_hints" class="mdb-select md-form">
-                                    <option value="-1" disabled selected>Choose your option</option>
+                                <select id="select_hints" class="browser-default custom-select">
+                                    <option value="-1" disabled selected>Seleccione una pista</option>
                                 </select>
                             </div>
                         </div>
@@ -138,15 +138,8 @@
         }
 
         for (let i = 1; i <= hints.length; i++) {
-            $(".mdb-select").append(new Option(hints[i], (i + 1).toString()));
+            $("#select_hints").append(new Option(hints[i], (i + 1).toString()));
         }
-
-        $('.mdb-select').materialSelect();
-
-        $('.mdb-select').on('change', function() {
-            document.getElementById("input_text").focus();
-            document.getElementById("input_text").value = $("#select_hints option:selected").text();
-        })
     });
 
 
@@ -168,8 +161,19 @@
         timerCounterIntervalId = setInterval(updateTimer, 100);
     }
 
-    function sendHint() {
-        alert($("#select_hints option:selected").text())
+    function reloadSelect() {
+        let hints = [];
+        let select = document.getElementById("select_hints");
+        select.options.length = 0;
+        $("#select_hints").append('<option value="-1" disabled selected>Seleccione una pista</option>');
+
+        if (readWebStorage("hints").length) {
+            hints = hints.concat(JSON.parse(readWebStorage("hints")));
+        }
+
+        for (let i = 1; i <= hints.length; i++) {
+            $("#select_hints").append(new Option(hints[i], (i + 1).toString()));
+        }
     }
 
     function insertHint() {
@@ -182,25 +186,10 @@
             }
             hints.push(hint);
             writeWebStorage(JSON.stringify(hints), "hints");
-
             document.getElementById("input_text").value = "";
 
-
-            //document.getElementById("select_hints").options.length = 0;
-
-/*
-            // Material Select Destroy
-            $('.mdb-select').materialSelect({
-                destroy: true
-            });
-
-
-
-            // Material Select Destroy
-            $('.mdb-select').materialSelect();
-*/
+            reloadSelect();
             toastr.info('Pista añadida');
-
         } else {
             toastr.error('Error: No se puede añadir una pista vacía.');
         }
@@ -214,10 +203,12 @@
             }
             hints.splice($("#select_hints").val() - 1, 1);
             writeWebStorage(JSON.stringify(hints), "hints");
+
+            reloadSelect();
             toastr.info('Pista borrada.');
         } else {
             toastr.error('Error: Debe seleccionar una pista.');
-            $('mdb-select').first().focus();
+            $('#select_hints').first().focus();
         }
     }
 
