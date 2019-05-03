@@ -142,7 +142,7 @@
         minutes = minutes < 10 ? '0' + minutes : minutes;
         seconds = seconds < 10 ? '0' + seconds : seconds;
 
-        if (counter === 0) {
+        if (counter < 0) {
             gameOver();
         } else {
             writeWebStorage(hours + ":" + minutes + ":" + seconds, "counter_number");

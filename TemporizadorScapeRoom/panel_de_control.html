@@ -142,6 +142,7 @@
 
     // Material Select Initialization
     $(document).ready(function () {
+        writeWebStorage(JSON.stringify([]), "hints");
         reloadSelect();
         inputsListener();
 
